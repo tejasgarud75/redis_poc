@@ -3,6 +3,8 @@ package com.redis_poc.service;
 import com.redis_poc.entity.Student;
 import com.redis_poc.repo.StudentRepo;
 import java.util.List;
+
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ public class StudentService {
     this.studentRepository = studentRepository;
   }
 
+  @CacheEvict(value = "students", allEntries = true)
   public Student saveStudent(Student student) {
     return studentRepository.save(student);
   }
@@ -26,7 +29,7 @@ public class StudentService {
 
   @Cacheable(value = "student", key = "#id")
   public Student getStudentByIdCas(Long id) {
-    return studentRepository.findById(id).get();
+    return studentRepository.findById(id).orElse(null);
   }
 
 }
